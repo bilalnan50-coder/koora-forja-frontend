@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Koora Forja</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #000; color: #ffd700; }
+    .match-card { background: #111; border: 1px solid #333; border-radius: 12px; padding: 10px; margin: 10px 0; }
+    .match-card:hover { background: #222; }
+  </style>
+</head>
+<body class="font-sans p-4">
+  <header class="text-center mb-4">
+    <h1 class="text-3xl font-bold mb-2">⚽ Koora Forja</h1>
+    <button id="langToggle" class="text-sm bg-yellow-600 px-2 py-1 rounded">AR / EN</button>
+  </header>
+
+  <main id="matchesContainer" class="space-y-2"></main>
+
+  <footer class="text-center text-xs mt-4 opacity-70">
+    © 2025 Koora Forja | Powered by TheSportsDB API
+  </footer>
+
+  <script>
+    const API_BASE = 'https://koora-forja-backend.onrender.com/api'; // رابط السيرفر
+    const matchesContainer = document.getElementById('matchesContainer');
+    const langToggle = document.getElementById('langToggle');
+    let currentLang = 'ar';
+
+    function renderMatches(matches) {
+      matchesContainer.innerHTML = '';
+      matches.forEach(m => {
+        const card = document.createElement('div');
+        card.className = 'match-card';
+        card.innerHTML = `
+          <div class="text-lg font-semibold">${m.home} 🆚 ${m.away}</div>
+          <div class="text-sm">${m.league}</div>
+          <div class="text-sm">🕒 ${m.time}</div>
+          <div class="text-sm">📺 ${m.channels.join(', ')}</div>
+        `;
+        matchesContainer.appendChild(card);
+      });
+    }
+
+    async function fetchMatches() {
+      try {
+        const res = await fetch(\`\${API_BASE}/matches\`);
+        const data = await res.json();
+        renderMatches(data);
+      } catch (err) {
+        matchesContainer.innerHTML = '<p class="text-center text-red-500">⚠️ خطأ في جلب البيانات</p>';
+      }
+    }
+
+    langToggle.addEventListener('click', () => {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      document.body.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    });
+
+    fetchMatches();
+  </script>
+</body>
+</html>
