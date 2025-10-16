@@ -61,5 +61,52 @@
 
     fetchMatches();
   </script>
-</body>
+</body><!-- 🏆 قسم البطولات -->
+<section id="leagues" class="mt-8 text-center">
+  <h2 style="color: gold; font-size: 22px; margin-bottom: 10px;">🏆 البطولات الكبرى</h2>
+  <div id="leagueList" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+    <!-- البطولات كيتزادو أوتوماتيكياً من JavaScript -->
+  </div>
+</section>
+
+<script>
+  const leagues = [
+    { id: 4328, name: 'Premier League', flag: '🇬🇧' },
+    { id: 4335, name: 'La Liga', flag: '🇪🇸' },
+    { id: 4331, name: 'Serie A', flag: '🇮🇹' },
+    { id: 4332, name: 'Bundesliga', flag: '🇩🇪' },
+    { id: 4334, name: 'Ligue 1', flag: '🇫🇷' },
+    { id: 4350, name: 'Botola Pro', flag: '🇲🇦' }
+  ];
+
+  const leagueList = document.getElementById('leagueList');
+  leagues.forEach(league => {
+    const div = document.createElement('div');
+    div.style.cssText = `
+      background: black;
+      color: gold;
+      border: 1px solid gold;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: bold;
+    `;
+    div.textContent = `${league.flag} ${league.name}`;
+    div.onclick = () => showLeagueMatches(league.id);
+    leagueList.appendChild(div);
+  });
+
+  async function showLeagueMatches(leagueId) {
+    const res = await fetch(`${API_BASE}/leagues/${leagueId}/matches`);
+    const data = await res.json();
+    // عرض الماتشات
+    const matchList = document.getElementById('matchList');
+    matchList.innerHTML = '';
+    data.matches.forEach(match => {
+      const li = document.createElement('li');
+      li.textContent = `${match.strHomeTeam} vs ${match.strAwayTeam} - ${match.dateEvent}`;
+      matchList.appendChild(li);
+    });
+  }
+</script>
 </html>
